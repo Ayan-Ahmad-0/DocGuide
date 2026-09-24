@@ -4,7 +4,7 @@ import sys
 from config import DOCUMENTS, CHUNKS, MAX_WORDS, MIN_WORDS
 
 PARA = re.compile(r"^(\d{1,2})\.\s")     # "1. Personal data shall be:"
-DEFN = re.compile(r"^\((\d{1,2})\)\s")   # Article 4 definitions: "(1) 'personal data'..."
+DEFN = re.compile(r"^\((\d{1,2})\)(?:\s|$)")   # Article 4 definitions: "(1) 'personal data'..."
 FOOTNOTE = re.compile(r"^(\(\d+\)\s*)?OJ [LC]\b")
 
 

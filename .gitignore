@@ -3,3 +3,4 @@
 .env
 __pycache__/
 data/raw/debug_response.html
+data/processed/embeddings_cache.jsonl

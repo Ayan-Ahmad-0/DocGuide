@@ -22,11 +22,21 @@ MAX_WORDS = 280   # a chunk never exceeds this
 MIN_WORDS = 60    # smaller pieces get merged with a neighbour
 
 # ---------- Retrieval ----------
-TOP_K = 5
+TOP_K = 8          # passages sent to the LLM
+MAX_PER_DOC = 3    # at most this many chunks from one article/recital (keeps sources varied)
 
 # ---------- Embeddings (Gemini) ----------
-EMBED_MODEL = "gemini-embedding-001"
-EMBED_DIM = 768   # must match the vector(768) column in Postgres
+EMBED_MODEL = "BAAI/bge-small-en-v1.5"
+EMBED_DIM = 384   # must match the vector(768) column in Postgres
 
+# ---------- LLM (Gemini) ----------
+LLM_MODEL = "gemini-3.1-flash-lite"   # copy the exact ID from AI Studio if you get a 404
+MAX_OUTPUT_TOKENS = 2048              # generous: "thinking" tokens count against this
+
+# USD per 1M tokens (standard paid tier). Check Google's pricing page and put the date in your README.
+LLM_PRICE_IN = 0.25
+LLM_PRICE_OUT = 1.50
+EMBED_PRICE_IN = 0.00   # gemini-embedding-001
+QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 # ---------- Database (Postgres + pgvector, e.g. Neon) ----------
 DATABASE_URL = os.getenv("DATABASE_URL")

@@ -14,13 +14,15 @@ TESTS = [
     ("What are the conditions for valid consent?", {"article-7", "article-4"}),
 ]
 
-hits = 0
+hit5 = hit8 = 0
 for q, expected in TESTS:
-    results = retrieve(q, k=5)
-    found = any(r["doc_id"] in expected for r in results)
-    hits += found
-    print(f"\n{'HIT ' if found else 'MISS'} | {q}")
-    for r in results:
-        print(f"   {r['score']:.3f}  {r['citation']}  {r['title'] or ''}")
+    results = retrieve(q, k=10)
+    rank = next((i + 1 for i, r in enumerate(results) if r["doc_id"] in expected), None)
+    hit5 += bool(rank and rank <= 5)
+    hit8 += bool(rank and rank <= 8)
+    print(f"\n{'HIT ' if rank and rank <= 8 else 'MISS'} | first correct rank: {rank} | {q}")
+    for i, r in enumerate(results[:8], 1):
+        mark = "*" if r["doc_id"] in expected else " "
+        print(f" {mark} {i:>2}. {r['score']:.3f}  {r['citation']}  {r['title'] or ''}")
 
-print(f"\nTop-5 hit rate: {hits}/{len(TESTS)}")
+print(f"\nHit@5: {hit5}/{len(TESTS)}   Hit@8: {hit8}/{len(TESTS)}")
