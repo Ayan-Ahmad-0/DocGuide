@@ -1,5 +1,5 @@
-requests
-beautifulsoup4
-lxml
-pytest
+google-genai
+psycopg[binary]
+pgvector
+numpy
 python-dotenv
