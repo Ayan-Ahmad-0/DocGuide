@@ -1,4 +1,4 @@
-# DocGuide — GDPR Research Assistant
+# DocGuide GDPR(General Data Protection Regulation) Research Assistant
 
 A Retrieval-Augmented Generation assistant that answers questions about the GDPR using only the official text — every claim is cited, every citation is checked against what was actually retrieved, and the assistant says so when the regulation doesn't cover something.
 
