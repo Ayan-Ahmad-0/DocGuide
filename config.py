@@ -40,3 +40,9 @@ EMBED_PRICE_IN = 0.00   # gemini-embedding-001
 QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 # ---------- Database (Postgres + pgvector, e.g. Neon) ----------
 DATABASE_URL = os.getenv("DATABASE_URL")
+
+# ---------- Evaluation ----------
+EVAL_QUESTIONS = ROOT / "data" / "eval" / "questions.jsonl"
+EVAL_RESULTS_DIR = ROOT / "eval" / "results"
+JUDGE_MODEL = LLM_MODEL   # ideally a stronger model than the one being graded; see notes below
+EVAL_PAUSE = 4            # seconds between questions, to be gentle on free-tier limits
