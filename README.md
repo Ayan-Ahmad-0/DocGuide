@@ -250,7 +250,6 @@ streamlit run app.py
 
 ## 🛠️ Future Improvements
 
-- Hand-check a sample of the LLM judge's gradings against human judgment to confirm the evaluation numbers reflect real accuracy, not just the judge agreeing with itself
 - Test loosening the refusal rule on genuinely ambiguous/partial questions to see whether a hedged partial answer serves users better than a flat refusal, without hurting out-of-scope accuracy
 - Add a lightweight reranking or hybrid BM25 + embedding retrieval step to close the remaining gap on other cross-reference-heavy clauses beyond the one found so far
 - Record a short demo walkthrough of the deployed assistant
