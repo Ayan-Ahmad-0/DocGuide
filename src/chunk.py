@@ -8,6 +8,27 @@ DEFN = re.compile(r"^\((\d{1,2})\)(?:\s|$)")   # Article 4 definitions: "(1) 'pe
 FOOTNOTE = re.compile(r"^(\(\d+\)\s*)?OJ [LC]\b")
 
 
+# Topic glosses for clauses that are mostly lists of article numbers.
+# Keyed by (article_number, paragraph_label). Extend as more weak spots surface.
+REFERENCE_GLOSS = {
+    (83, "4"): "includes failures to appoint or properly involve a data protection officer "
+               "(Article 37 DPO designation, Article 38 DPO position, Article 39 DPO tasks), "
+               "and other Articles 25 to 39 obligations",
+    (83, "5"): "includes violations of data subject rights, international data transfer rules, "
+               "and basic processing principles",
+}
+
+
+def add_reference_gloss(doc: dict, labels: list, embed_text: str) -> str:
+    """Append a short topic gloss to embed_text for clauses that are dense
+    article-number cross-references, so they embed closer to topical queries."""
+    if doc["type"] != "article":
+        return embed_text
+    for label in labels:
+        gloss = REFERENCE_GLOSS.get((doc["number"], label))
+        if gloss:
+            return f"{embed_text}\n(Note: {gloss})"
+    return embed_text
 def wc(text: str) -> int:
     return len(text.split())
 
@@ -104,7 +125,9 @@ def build_chunks(doc: dict) -> list[dict]:
             "chapter": doc.get("chapter"),
             "citation": cite,
             "text": m["text"],
-            "embed_text": f"{header}\n{m['text']}",   # what gets embedded
+            "embed_text": add_reference_gloss(
+                doc, m["labels"], f"{header}\n{m['text']}"
+            ),
             "words": wc(m["text"]),
         })
     return chunks
