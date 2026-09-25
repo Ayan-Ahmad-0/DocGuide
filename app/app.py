@@ -48,8 +48,21 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid var(--dg-border);
 }
 
-/* Hide the Deploy button and make headers transparent */
-#MainMenu, footer, header[data-testid="stHeader"] { background-color: transparent; }
+/* Fix top padding gaps injected by Streamlit */
+.block-container {
+    padding-top: 2rem !important;
+}
+[data-testid="stSidebar"] > div:first-child,
+[data-testid="stSidebarUserContent"] {
+    padding-top: 1rem !important;
+}
+
+/* Hide the Deploy button and footer, but KEEP the main menu (three dots) and sidebar toggle */
+footer { display: none !important; }
+header[data-testid="stHeader"] { 
+    background-color: transparent !important; 
+    box-shadow: none !important;
+}
 .stAppDeployButton { display: none !important; }
 
 /* ---- sidebar brand ---- */
@@ -124,7 +137,6 @@ section[data-testid="stSidebar"] div[data-testid="stExpander"] div[role="region"
     border-radius: 0 0 10px 10px !important;
     padding: 1rem !important;
 }
-/* Force ALL text inside the expanded region to be white */
 section[data-testid="stSidebar"] div[data-testid="stExpander"] div[role="region"] * {
     color: #ffffff !important;
     font-size: 0.85rem !important;
@@ -201,25 +213,26 @@ div[data-testid="stSpinner"] p {
     font-weight: 500;
 }
 
-/* ---- chat input & bottom area ---- */
-/* Fix the sky blue background around the search bar */
+/* ---- chat input container styling ---- */
+/* Remove default background so it doesn't block UI when floating */
 div[data-testid="stBottom"], div[data-testid="stBottom"] > div {
-    background-color: var(--dg-bg) !important;
+    background-color: transparent !important;
 }
 
-/* Main search bar styling */
+/* Main search bar styling (Always rounded and bounded) */
 div[data-testid="stChatInput"] {
     background-color: var(--dg-panel) !important;
     border: 1px solid var(--dg-border) !important;
-    border-radius: 14px !important;
+    border-radius: 30px !important; 
+    max-width: 800px !important; 
+    margin: 0 auto !important; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
 }
 
-/* Force inner containers to be transparent so they don't block the dark background */
 div[data-testid="stChatInput"] * {
     background-color: transparent !important;
 }
 
-/* Fix text visibility */
 div[data-testid="stChatInput"] textarea {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important; 
@@ -230,13 +243,13 @@ div[data-testid="stChatInput"] textarea::placeholder {
     -webkit-text-fill-color: var(--dg-muted) !important; 
 }
 
-/* Send button styling */
 div[data-testid="stChatInput"] button {
     background-color: var(--dg-blue) !important;
     border-radius: 50% !important;
-    width: 32px !important;
-    height: 32px !important;
+    width: 34px !important;
+    height: 34px !important;
     border: none !important;
+    margin-right: 0.3rem !important; 
 }
 div[data-testid="stChatInput"] button svg {
     fill: #ffffff !important;
@@ -357,30 +370,13 @@ with st.sidebar:
             "DocGuide answers questions using only retrieved GDPR text. "
             "Every claim is cited, and citations are checked against what "
             "was actually retrieved before being shown. Portfolio project, "
-            "not legal advice.",
-            unsafe_allow_html=False,
+            "not legal advice."
         )
-
-    st.markdown(
-        """
-        <style>
-        section[data-testid="stSidebar"] .stExpander {
-            color: white !important;
-        }
-        section[data-testid="stSidebar"] .stExpander .st-emotion-cache-1v0mbdj,
-        section[data-testid="stSidebar"] .stExpander .st-emotion-cache-16idsys,
-        section[data-testid="stSidebar"] .stExpander .st-emotion-cache-1h3r4g2,
-        section[data-testid="stSidebar"] .stExpander p,
-        section[data-testid="stSidebar"] .stExpander summary {
-            color: white !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
 
 
 # ---------------------------------------------------------------- main area
+
+# Always render the hero at the top
 st.markdown(
     '<div class="dg-hero"><div class="dg-logo">📄</div>'
     '<div><h1>Ask your documents.</h1>'
@@ -389,7 +385,6 @@ st.markdown(
 )
 
 chat_area = st.container()
-
 
 def render_message(msg: dict):
     role = msg["role"]
@@ -422,13 +417,38 @@ def render_message(msg: dict):
             )
         st.markdown(html, unsafe_allow_html=True)
 
-
 for msg in st.session_state.messages:
     render_message(msg)
 
+# Read the chat input state
 typed = st.chat_input("Ask a question about the GDPR...")
 question = st.session_state.pending_question or typed
 st.session_state.pending_question = None
+
+# Determine layout mode based on whether it is the very first, empty view
+is_empty = len(st.session_state.messages) == 0 and not question
+
+if is_empty:
+    # Inject CSS to center the chat input if no messages exist and user hasn't asked anything
+    st.markdown("""
+    <style>
+    div[data-testid="stBottom"] {
+        bottom: 35vh !important; 
+        background-color: transparent !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    # Immediately drop the chat input down when the user submits a question
+    st.markdown("""
+    <style>
+    div[data-testid="stBottom"] {
+        background-color: var(--dg-bg) !important;
+        padding-top: 10px !important;
+        padding-bottom: 20px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 if question:
     now = datetime.now().strftime("%I:%M %p").lstrip("0")
