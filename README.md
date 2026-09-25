@@ -1,6 +1,6 @@
 # DocGuide GDPR(General Data Protection Regulation) Research Assistant
 
-A Retrieval-Augmented Generation assistant that answers questions about the GDPR using only the official text — every claim is cited, every citation is checked against what was actually retrieved, and the assistant says so when the regulation doesn't cover something.
+A Retrieval Augmented Generation assistant that answers questions about the GDPR using only the official text every claim is cited, every citation is checked against what was actually retrieved, and the assistant says so when the regulation doesn't cover something.
 
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://streamlit.io/)
