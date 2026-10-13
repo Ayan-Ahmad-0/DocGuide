@@ -11,7 +11,7 @@ A Retrieval Augmented Generation assistant that answers questions about the GDPR
 
 ---
 
-## 📋 Overview
+## Overview
 
 DocGuide is a grounded question-answering assistant over the full text of the GDPR (articles and recitals, fetched from EUR-Lex). It:
 
@@ -28,7 +28,7 @@ This mirrors how a production RAG system is actually validated for a specialized
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 **EUR-Lex (GDPR HTML)** → **Parse & Chunk (Python)** → **Local Embeddings (bge-small-en-v1.5)** → **Postgres + pgvector (Neon)** → **Retrieve + Generate (Gemini)** → **Streamlit Assistant (Streamlit Community Cloud)**
 
@@ -61,7 +61,7 @@ This mirrors how a production RAG system is actually validated for a specialized
 
 ---
 
-## 📊 Assistant Output
+## Assistant Output
 
 <!-- Add: images/app_chat.png, images/app_sources.png -->
 ![Chat View](images/app_chat.png)
@@ -69,7 +69,7 @@ This mirrors how a production RAG system is actually validated for a specialized
 
 ---
 
-## 🔄 Pipeline Flow
+## Pipeline Flow
 
 ```
 Fetch GDPR HTML (EUR-Lex)
@@ -97,9 +97,9 @@ Each stage writes its own intermediate file (`documents.jsonl`, `chunks.jsonl`),
 
 ---
 
-## ✅ Evaluation Results
+## Evaluation Results
 
-A 47-question set — 37 answerable, 8 deliberately out-of-scope, 2 genuinely ambiguous under the GDPR itself — run automatically end-to-end against the live retrieval + generation pipeline:
+A 47-question set 37 answerable, 8 deliberately out-of-scope, 2 genuinely ambiguous under the GDPR itself — run automatically end-to-end against the live retrieval + generation pipeline:
 
 | Metric | Result |
 |---|---|
@@ -120,7 +120,7 @@ The one false refusal found during development (a question about DPO-related fin
 
 ---
 
-## 🗂️ Vector Store (Postgres + pgvector on Neon)
+## Vector Store (Postgres + pgvector on Neon)
 
 | Object | Description |
 |---|---|
@@ -129,7 +129,7 @@ The one false refusal found during development (a question about DPO-related fin
 
 ---
 
-## 🔒 Grounding & Reliability
+## Grounding & Reliability
 
 - **Strict grounding** — the system prompt instructs the model to answer only from retrieved passages, never from general knowledge of the GDPR
 - **Explicit refusal** — a fixed refusal token/message is used when retrieved passages don't cover the question, rather than letting the model improvise an answer it can't support
@@ -140,7 +140,7 @@ The one false refusal found during development (a question about DPO-related fin
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 docguide/
@@ -202,7 +202,7 @@ DATABASE_URL=postgresql://user:password@your-neon-host-pooler.neon.tech/dbname?s
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ```
 # Clone the repo
@@ -236,7 +236,7 @@ streamlit run app.py
 
 ---
 
-## 🚧 Challenges Solved
+## Challenges Solved
 
 - Hit Gemini embedding **quota limits (429 errors)** mid-build; switched from `gemini-embedding-001` (768-dim) to a local `bge-small-en-v1.5` model (384-dim) — removes quota risk entirely and drops embedding cost to zero, at a small retrieval-quality tradeoff (Hit@5 6/7 vs. 7/7 in the smoke test)
 - Diagnosed a **false refusal** on an answerable question (DPO-related fines under Article 83(4)) by tracing it through raw ranked retrieval output — the correct clause scored *lower* than five sibling sub-clauses of the same article because its text is a dense cross-reference list with no descriptive language
@@ -248,7 +248,7 @@ streamlit run app.py
 
 ---
 
-## 🛠️ Future Improvements
+## Future Improvements
 
 - Test loosening the refusal rule on genuinely ambiguous/partial questions to see whether a hedged partial answer serves users better than a flat refusal, without hurting out-of-scope accuracy
 - Add a lightweight reranking or hybrid BM25 + embedding retrieval step to close the remaining gap on other cross-reference-heavy clauses beyond the one found so far
